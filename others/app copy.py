@@ -11,11 +11,9 @@ from langchain.chains.question_answering import load_qa_chain
 from langchain.callbacks import get_openai_callback
 import os
 
-st.set_page_config(page_title='🤗💬 PDF Chat App - GPT')
-
 # Sidebar contents
 with st.sidebar:
-    st.title('🤗💬 PDF Chat App')
+    st.title('🤗💬 LLM Chat App')
     st.markdown('''
     ## About
     This app is an LLM-powered chatbot built using:
@@ -31,7 +29,7 @@ with st.sidebar:
 
 
 def main():
-    st.header("Talk to your PDF 💬")
+    st.header("Chat with PDF 💬")
     st.write("This app uses OpenAI's LLM model to answer questions about your PDF file. Upload your PDF file and ask questions about it. The app will return the answer from your PDF file.")
 
     st.header("1. Pass your OPEN AI API KEY here")
@@ -49,52 +47,54 @@ def main():
     pdf = st.file_uploader("**Upload your PDF**", type='pdf')
 
     # st.write(pdf)
-
-    if pdf is not None:
-        pdf_reader = PdfReader(pdf)
-
-        text = ""
-        for page in pdf_reader.pages:
-            text += page.extract_text()
-
-        text_splitter = RecursiveCharacterTextSplitter(
-            chunk_size=1000,
-            chunk_overlap=200,
-            length_function=len
-            )
-        chunks = text_splitter.split_text(text=text)
-
-        # # embeddings
-        store_name = pdf.name[:-4]
-        st.write(f'{store_name}')
-        # st.write(chunks)
-
-        if os.path.exists(f"{store_name}.pkl"):
-            with open(f"{store_name}.pkl", "rb") as f:
-                VectorStore = pickle.load(f)
-            # st.write('Embeddings Loaded from the Disk')s
+    if st.button('Upload PDF'):
+        if openai_key=='':
+            st.write('Please pass your OPEN AI API KEY')
         else:
-            embeddings = OpenAIEmbeddings()
-            VectorStore = FAISS.from_texts(chunks, embedding=embeddings)
-            with open(f"{store_name}.pkl", "wb") as f:
-                pickle.dump(VectorStore, f)
+            if pdf is not None:
+                pdf_reader = PdfReader(pdf)
 
-        # embeddings = OpenAIEmbeddings()
-        # VectorStore = FAISS.from_texts(chunks, embedding=embeddings)
+                text = ""
+                for page in pdf_reader.pages:
+                    text += page.extract_text()
 
-    # st.header("or.. Try it with this The Alchaemist PDF book")
-    # if st.button('Ask The Alchemist Book Questions'):
-    #     with open("The_Alchemist.pkl", "rb") as f:
-    #         VectorStore = pickle.load(f)
+                text_splitter = RecursiveCharacterTextSplitter(
+                    chunk_size=1000,
+                    chunk_overlap=200,
+                    length_function=len
+                    )
+                chunks = text_splitter.split_text(text=text)
+
+                # # embeddings
+                store_name = pdf.name[:-4]
+                st.write(f'{store_name}')
+                # st.write(chunks)
+
+                if os.path.exists(f"{store_name}.pkl"):
+                    with open(f"{store_name}.pkl", "rb") as f:
+                        VectorStore = pickle.load(f)
+                    # st.write('Embeddings Loaded from the Disk')s
+                else:
+                    embeddings = OpenAIEmbeddings()
+                    VectorStore = FAISS.from_texts(chunks, embedding=embeddings)
+                    with open(f"{store_name}.pkl", "wb") as f:
+                        pickle.dump(VectorStore, f)
+
+                # embeddings = OpenAIEmbeddings()
+                # VectorStore = FAISS.from_texts(chunks, embedding=embeddings)
+
+    st.header("or.. Try it with this The Alchaemist PDF book")
+    if st.button('Ask The Alchemist Book Questions'):
+        with open("The_Alchemist.pkl", "rb") as f:
+            VectorStore = pickle.load(f)
         # Accept user questions/query
-        st.header("3. Ask questions about your PDF file:")
-        q="Tell me about the content of the PDF"
-        query = st.text_input("Questions",value=q)
+        query = st.text_input("Ask questions about your PDF file:",value="Tell me about Santiago life")
         # st.write(query)
+        st.write("Tell me about Santiago life")
 
-        if st.button("Ask"):
-            # st.write(openai_key)
-            # os.environ["OPENAI_API_KEY"] = openai_key
+        if query:
+            st.write(openai_key
+            os.environ["OPENAI_API_KEY"] = openai_key
             if openai_key=='':
                 st.write('Warning: Please pass your OPEN AI API KEY on Step 1')
             else:
