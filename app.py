@@ -45,7 +45,7 @@ def main():
 
     # upload a PDF file
 
-    st.header("2. Ask My Own PDF")
+    st.header("2. Upload PDF")
     pdf = st.file_uploader("**Upload your PDF**", type='pdf')
 
     # st.write(pdf)
