@@ -41,8 +41,6 @@ def main():
     # if openai_key=='':
     #     load_dotenv()
 
-
-
     # upload a PDF file
 
     st.header("2. Upload PDF")
