@@ -35,11 +35,16 @@ def main():
     st.write("This app uses OpenAI's LLM model to answer questions about your PDF file. Upload your PDF file and ask questions about it. The app will return the answer from your PDF file.")
 
     st.header("1. Pass your OPEN AI API KEY here")
-    openai_key=st.text_input("**OPEN AI API KEY**")
-    st.write("You can get your OpenAI API key from [here](https://beta.openai.com/account/api-keys)")
-    os.environ["OPENAI_API_KEY"] = openai_key
+    v='demo'
+    openai_key=st.text_input("**OPEN AI API KEY**", value=v)
+    st.write("You can get your OpenAI API key from [here](https://platform.openai.com/account/api-keys)")
+
+
+    if openai_key==v:
+        openai_key=st.secrets["OPENAI_API_KEY"]
     # if openai_key=='':
     #     load_dotenv()
+    os.environ["OPENAI_API_KEY"] = openai_key
 
     # upload a PDF file
 
