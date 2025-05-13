@@ -8,3 +8,4 @@ streamlit-extras
 altair==4.1.0
 openai
 tiktoken
+streamlit-extras
